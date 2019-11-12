@@ -17,7 +17,7 @@ const app = express();
 // the fake database
 const users = [
     { id: 1, user: "Brandon", description: "I am people", mood: ["good", "bad"] },
-    { id: 2, title: "Squeakers", description: "I am a cat", mood: ["cat", "cat"] }
+    { id: 2, user: "Squeakers", description: "I am a cat", mood: ["cat", "cat"] }
 ];
 // enhance your app security with Helmet
 app.use(helmet());
