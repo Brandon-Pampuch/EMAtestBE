@@ -42,12 +42,19 @@ const Mutation = new GraphQLObjectType({
                 sub: { type: new GraphQLNonNull(GraphQLString) }
             },
             resolve(parent, args, context) {
-                console.log(context.user.sub)
+                console.log("sub in resolve", context.user.sub)
                 let user = new User({
                     name: args.name,
                     sub: context.user.sub
                 })
-                return user.save()
+                let registeredUser = User.find({ sub: user.sub })
+                console.log(registeredUser)
+                if (registeredUser === undefined) {
+                    console.log("new user added")
+                    return user.save()
+                } else {
+                    return console.error("user already exists");
+                }
             }
         }
     }
