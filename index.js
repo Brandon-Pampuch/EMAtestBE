@@ -7,6 +7,9 @@ const morgan = require('morgan');
 const jwt = require('express-jwt');
 const jwksRsa = require('jwks-rsa');
 const authConfig = require('./authconfig.json')
+// graph ql dependencies
+const graphqlHTTP = require("express-graphql")
+const schema = require('./schema/schema')
 
 
 // how mongoose brings in the REAL db
@@ -15,10 +18,10 @@ const User = require('./models/user')
 // define the Express app
 const app = express();
 // the fake database
-const users = [
-    { id: 1, user: "Brandon", description: "I am people", mood: ["good", "bad"] },
-    { id: 2, user: "Squeakers", description: "I am a cat", mood: ["cat", "cat"] }
-];
+// const users = [
+//     { id: 1, user: "Brandon", description: "I am people", mood: ["good", "bad"] },
+//     { id: 2, user: "Squeakers", description: "I am a cat", mood: ["cat", "cat"] }
+// ];
 // enhance your app security with Helmet
 app.use(helmet());
 // use bodyParser to parse application/json content-type
@@ -27,8 +30,6 @@ app.use(bodyParser.json());
 app.use(cors());
 // log HTTP requests
 app.use(morgan('combined'));
-
-
 
 //checks web token middleware
 const checkJwt = jwt({
@@ -45,29 +46,16 @@ const checkJwt = jwt({
     algorithms: ['RS256']
 });
 
-// retrieve all users
-app.get('/', checkJwt, (req, res) => {
 
-    //user id exists on the request and in the  jwt token
-    console.log(req.user.sub)
 
-    //creates new user and saves to db
-    var char = new User({
-        name: "new_user",
-        sub: req.user.sub
+app.use(
+    '/graphql', checkJwt,
+    graphqlHTTP((request, response, graphQLParams) => ({
+        schema: schema,
+        graphiql: true,
 
-    })
-
-    char.save()
-
-    const allUsers = users.map(u => ({
-        id: u.id,
-        user: u.user,
-        description: u.description,
-        mood: u.mood.length
-    }));
-    res.send(allUsers);
-});
+    }))
+);
 
 //server connection with mongoDB
 const PORT = process.env.PORT || 8080
