@@ -48,13 +48,18 @@ const Mutation = new GraphQLObjectType({
                     sub: context.user.sub
                 })
                 let registeredUser = User.find({ sub: user.sub })
-                console.log(registeredUser)
-                if (registeredUser === undefined) {
-                    console.log("new user added")
-                    return user.save()
+                console.log(registeredUser.getOptions.condition)
+
+
+                // front end logic.
+                if (registeredUser !== undefined) {
+                    //user.save() + registered user
                 } else {
-                    return console.error("user already exists");
+                    //user pushed back or logged out
                 }
+                console.log("new user added")
+                return user.save()
+
             }
         }
     }

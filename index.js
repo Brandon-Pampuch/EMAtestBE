@@ -50,7 +50,7 @@ const checkJwt = jwt({
 
 app.use(
     '/graphql', checkJwt,
-    graphqlHTTP((request, response, graphQLParams) => ({
+    graphqlHTTP(() => ({
         schema: schema,
         graphiql: true,
 
